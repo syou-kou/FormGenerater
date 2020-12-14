@@ -1,3 +1,3 @@
 function main() {
-  new FormGenerater().main();
+	new FormGenerater().main();
 }
