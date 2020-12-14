@@ -1,3 +1,7 @@
+// デバッグモード
+// ・対象シートが「sample」になる
+const DEBUG_MODE = false;
+
 // データ種別
 const DATATYPE_WORKBOOK_TITLE = "問題集タイトル";
 const DATATYPE_CHAPTER_TITLE = "章タイトル";
@@ -16,3 +20,8 @@ const ANSWERTYPE_SELECTION_SINGLE = "単一選択式";
 const ANSWERTYPE_SELECTION_MULTIPLE = "複数選択式";
 const ANSWERTYPE_DESCRIPTION = "記述式";
 const ANSWERTYPE_OTHER = "判別不能";
+
+// ログ種別
+const LOGTYPE_ERROR = "エラー";
+const LOGTYPE_WARNING = "警告";
+const LOGTYPE_QUESTION = "問題";

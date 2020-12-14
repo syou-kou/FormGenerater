@@ -1,11 +1,24 @@
+let log;
+
 function main() {
+  // ログ出力用
+  log = new Log();
+  log.clearLog();
+  
   // スプレッドシートの情報を取得する
   const activeSpreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  const values = activeSpreadsheet.getSheetByName("target").getDataRange().getValues();
+  
+  // 対象シートの全セルの値を取得する
+  const sheetName = DEBUG_MODE ? "sample" : "target";
+  const values = activeSpreadsheet.getSheetByName(sheetName).getDataRange().getValues();
   
   // 第1行から問題集タイトルを取得する
   if (values[0][0] !== DATATYPE_WORKBOOK_TITLE) {
-    console.log("第1行が" + DATATYPE_WORKBOOK_TITLE + "ではありません。");
+    log.printLog(LOGTYPE_ERROR, "第1行が" + DATATYPE_WORKBOOK_TITLE + "ではありません。");
+    return;
+  }
+  if (values[0][1] === undefined) {
+    log.printLog(LOGTYPE_ERROR, "問題集タイトルが取得できません。");
     return;
   }
   const workBookTitle = values[0][1];
@@ -27,12 +40,15 @@ function main() {
       // Ｂ列の章タイトルを取得する
       const title = values[r][1];
       // フォーム未作成の章情報、問題情報があれば新規フォームを作成する
-      if (question !== undefined) {
-        chapter.addQuestion(question);
+      if (chapter !== undefined) {
+        if (question !== undefined) {
+          chapter.addQuestion(question);
+        }
         new Form(chapter, workBookFolder).createForm();
       }
       // 章情報と問題情報を初期化する
       chapter = new Chapter(title);
+      console.log(title);
       question = undefined;
       
     //--------------------
@@ -56,6 +72,7 @@ function main() {
       }
       // 問題情報を初期化する
       question = new Question(questionSentence);
+      console.log(questionSentence);
       
     //--------------------
     // 現在行が選択肢の場合
@@ -67,9 +84,9 @@ function main() {
       // 問題情報に選択肢を追加する
       question.addChoice(choiceSentence, isCorrect);
       
-    //--------------------
+    //---------------------
     // 現在行が記述解答の場合
-    //--------------------
+    //---------------------
     } else if (dataType === DATATYPE_ANSWER) {
       // Ｂ列の記述解答を取得する
       const answer = values[r][1];
@@ -99,7 +116,10 @@ function main() {
   }
   
   // フォーム未作成の章情報、問題情報があれば新規フォームを作成する
-  chapter.addQuestion(question);
-  new Form(chapter, workBookFolder).createForm();
-  
+  if (chapter !== undefined) {
+    if (question !== undefined) {
+      chapter.addQuestion(question);
+    }
+    new Form(chapter, workBookFolder).createForm();
+  }
 }

@@ -26,7 +26,7 @@ class Form {
   }
   
   // 解答形式に応じてフォームに問題情報を追加する
-  setQuestionInfo(item, question, answerType) {
+  setQuestionInfo(item, question) {
     // すべての解答形式に共通する項目
     item.setTitle(question.sentence); // 問題文
     item.setRequired(false);          // 必須回答オプション
@@ -41,7 +41,7 @@ class Form {
     const feedbackBuilder = feedback.build();
     
     // 単一/複数選択式に共通する項目
-    if (answerType === ANSWERTYPE_SELECTION_SINGLE || answerType === ANSWERTYPE_SELECTION_MULTIPLE) {
+    if (question.answerType === ANSWERTYPE_SELECTION_SINGLE || question.answerType === ANSWERTYPE_SELECTION_MULTIPLE) {
       // 選択肢情報
       let choices = [];
       for (const choice of question.choices) {
@@ -55,7 +55,7 @@ class Form {
       item.setFeedbackForIncorrect(feedbackBuilder);
     }
     // 記述式のみの項目
-    if (answerType === ANSWERTYPE_DESCRIPTION) {
+    if (question.answerType === ANSWERTYPE_DESCRIPTION) {
       // フィードバック
       item.setGeneralFeedback(feedbackBuilder);
     }
@@ -81,13 +81,20 @@ class Form {
     this.form.setProgressBar(true);
     // 問題情報
     for (const question of this.chapter.questions) {
+      // 問題情報を出力する
+      question.printQuestionInfo();
+      // 解答形式を判別する
+      question.setAnswerType();
       // 解答形式に応じてアイテムを作成する
-      const answerType = question.getAnswerType();
-      let item = this.createItem(answerType);
-      // アイテム未作成時は、以降の処理を行わない
-      if (item === undefined) { return; }
-      // フォームに問題情報を追加する
-      this.setQuestionInfo(item, question, answerType);
+      let item = this.createItem(question.answerType);
+      // アイテム作成時のみ、フォームに問題情報を追加する
+      if (item !== undefined) {
+        this.setQuestionInfo(item, question);
+        // 記述式の場合のみ、警告メッセージを出力する
+        if (question.answerType === ANSWERTYPE_DESCRIPTION) {
+          log.printLog(LOGTYPE_WARNING, "問題「" + question.sentence + "」の記述解答はフォーム作成後、手作業で反映をお願いします。");
+        }
+      }
     }
     // 作成したフォームを保存先フォルダに移動する
     this.moveForm();
