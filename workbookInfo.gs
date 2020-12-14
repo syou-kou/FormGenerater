@@ -20,6 +20,7 @@ class Question {
 
   constructor(sentence) {
     this.sentence = sentence; // 問題文
+    this.helpText;            // 問題文備考
     this.choices = [];        // 選択肢情報配列
     this.answer;              // 記述解答
     this.explanation;         // 解説文

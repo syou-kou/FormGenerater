@@ -74,6 +74,15 @@ function main() {
       question = new Question(questionSentence);
       console.log(questionSentence);
       
+    //-----------------------
+    // 現在行が問題文備考の場合
+    //-----------------------
+    } else if (dataType === DATATYPE_HELPTEXT) {
+      // Ｂ列の問題文備考を取得する
+      const helpText = values[r][1];
+      // 問題情報に問題文備考を追加する
+      question.helpText = helpText;
+      
     //--------------------
     // 現在行が選択肢の場合
     //--------------------

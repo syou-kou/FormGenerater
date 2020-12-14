@@ -28,9 +28,10 @@ class Form {
   // 解答形式に応じてフォームに問題情報を追加する
   setQuestionInfo(item, question) {
     // すべての解答形式に共通する項目
-    item.setTitle(question.sentence); // 問題文
-    item.setRequired(false);          // 必須回答オプション
-    item.setPoints(1);                // 得点
+    item.setTitle(question.sentence);    // 問題文
+    item.setHelpText(question.helpText); // 問題文備考
+    item.setRequired(false);             // 必須回答オプション
+    item.setPoints(1);                   // 得点
     
     // フィードバック内容(解答形式により呼び出すメソッドが異なる)
     let feedback = FormApp.createFeedback();
