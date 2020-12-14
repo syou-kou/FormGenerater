@@ -35,11 +35,22 @@ class Form {
     
     // フィードバック内容(解答形式により呼び出すメソッドが異なる)
     let feedback = FormApp.createFeedback();
-    feedback.setText(question.explanation);         // 解説文
-    for (const link of question.links) {
-      feedback.addLink(link.url, link.displayText); // リンク
+    // 解説文
+    const explanation = (question.explanation === undefined || question.explanation === "") ? "解説文はまだ登録されていません" : question.explanation;
+    feedback.setText(explanation);
+    // リンク
+    console.log(question.links.length);
+    if (question.links.length > 0) {
+      for (const link of question.links) {
+        const url = (link.url === undefined || link.url === "") ? "No links" : link.url;
+        const displayText = (link.displayText === undefined || link.displayText === "") ? "リンク" : link.displayText;
+        console.log(url);
+        console.log(displayText);
+        feedback.addLink(url, displayText);
+      }
     }
     const feedbackBuilder = feedback.build();
+    console.log(feedbackBuilder);
     
     // 単一/複数選択式に共通する項目
     if (question.answerType === ANSWERTYPE_SELECTION_SINGLE || question.answerType === ANSWERTYPE_SELECTION_MULTIPLE) {
@@ -52,13 +63,17 @@ class Form {
       // その他項目表示オプション
       item.showOtherOption(false);
       // 正解/不正解時フィードバック
-      item.setFeedbackForCorrect(feedbackBuilder);
-      item.setFeedbackForIncorrect(feedbackBuilder);
+      if (feedbackBuilder !== undefined) {
+        item.setFeedbackForCorrect(feedbackBuilder);
+        item.setFeedbackForIncorrect(feedbackBuilder);
+      }
     }
     // 記述式のみの項目
     if (question.answerType === ANSWERTYPE_DESCRIPTION) {
       // フィードバック
-      item.setGeneralFeedback(feedbackBuilder);
+      if (feedbackBuilder !== undefined) {
+        item.setGeneralFeedback(feedbackBuilder);
+      }
     }
   }
   

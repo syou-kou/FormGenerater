@@ -1,6 +1,6 @@
 // デバッグモード
 // ・対象シートが「sample」になる
-const DEBUG_MODE = true;
+const DEBUG_MODE = false;
 
 // データ種別
 const DATATYPE_WORKBOOK_TITLE = "問題集タイトル";
