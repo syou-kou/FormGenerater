@@ -111,7 +111,26 @@ class Chapter {
   
   // 章情報に問題情報を1つ追加する
   addQuestion(question) {
-    this.questions.push(question);
+    if (question !== undefined) {
+      this.questions.push(question);
+    }
+  }
+  
+}
+
+class WorkbookInfo {
+
+  constructor() {
+    this.workbookTitle = '';
+    this.sheetNames = [];
+    this.chapters = [];
+  }
+  
+  // 問題集情報に章情報を1つ追加する
+  addChapter(chapter) {
+    if (chapter !== undefined) {
+      this.chapters.push(chapter);
+    }
   }
   
 }

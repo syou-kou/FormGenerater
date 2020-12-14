@@ -1,7 +1,7 @@
 class Log {
   
   constructor() {
-    this.sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("log");
+    this.sheet = activeSpreadsheet.getSheetByName(SHEET_NAME_LOG);
   }
   
   clearLog() {
@@ -13,6 +13,11 @@ class Log {
   printLog(type, message) {
     console.log(message);
     this.sheet.getRange(this.sheet.getLastRow() + 1, 1, 1, 2).setValues([[type, message]]);
+  }
+  
+  printLongLog(type, message, sheetName, rowId, colId) {
+    const location = "\n(" + sheetName + "シート" + (rowId + 1) + "行" + (colId + 1) + "列)";
+    this.printLog(type, message + location);
   }
   
 }

@@ -1,9 +1,13 @@
 // デバッグモード
 // ・対象シートが「sample」になる
-const DEBUG_MODE = false;
+const DEBUG_MODE = true;
+
+// ログ出力シート名
+const SHEET_NAME_LOG = "log";
 
 // データ種別
 const DATATYPE_WORKBOOK_TITLE = "問題集タイトル";
+const DATATYPE_SHEET_NAME = "シート名";
 const DATATYPE_CHAPTER_TITLE = "章タイトル";
 const DATATYPE_CHAPTER_DESCRIPTION = "章概要";
 const DATATYPE_QUESTION_SENTENCE = "問題文";
