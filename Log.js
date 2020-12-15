@@ -15,9 +15,9 @@ class Log {
 		this.sheet.getRange(this.sheet.getLastRow() + 1, 1, 1, 2).setValues([[type, message]]);
 	}
 
-	printLongLog(type, message, sheetName, rowId, colId) {
-		const location = "\n(" + sheetName + "シート" + (rowId + 1) + "行" + (colId + 1) + "列)";
-		this.printLog(type, message + location);
-	}
+	// printLogWithLocation(type, message, sheetName, rowId, colId) {
+	// 	const location = "\n(" + sheetName + "シート" + (rowId + 1) + "行" + (colId + 1) + "列)";
+	// 	this.printLog(type, message + location);
+	// }
 
 }
