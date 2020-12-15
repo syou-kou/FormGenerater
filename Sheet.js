@@ -51,7 +51,7 @@ class FirstSheet extends Sheet {
 			const workbookTitle = this.values[rowId][1];
 			// if (!new Cell(this.sheetName, rowId, 1, workbookTitle).isNullString(DATATYPE_WORKBOOK_TITLE)) {
 			const workbookTitleValidation = new Validation(workbookTitle, new CellLocation(this.sheetName, rowId, 1));
-			const isCorrectWorkbookTitle = dataTypeValidation.validate(VALIDATION_TYPES.NOT_NULL, [], LOG_TYPE_ERROR);
+			const isCorrectWorkbookTitle = workbookTitleValidation.validate(VALIDATION_TYPES.NOT_NULL, [], LOG_TYPE_ERROR);
 			if (isCorrectWorkbookTitle) workbookInfo.workbookTitle = workbookTitle;
 		}
 	}

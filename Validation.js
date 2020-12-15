@@ -14,7 +14,7 @@ class Validation {
 			}
 			log.printLog(logType, message);
 		}
-		return 
+		return isCorrect;
 	}
 
 	// private
