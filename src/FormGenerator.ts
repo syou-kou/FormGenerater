@@ -9,8 +9,8 @@ class FormGenerator {
 
 	// スプレッドシートの問題情報からフォームを作成する
 	public main(): boolean {
-		const logSheet = new Log(SHEET_NAME_LOG);
-		if (!logSheet) return false;
+		log = new Log(SHEET_NAME_LOG);
+		if (!log) return false;
 		log.clearLog();
 
 		workbookInfo = new WorkbookInfo();

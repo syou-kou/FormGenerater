@@ -40,8 +40,8 @@ class Form {
 			if (item) {
 				this.setQuestionInfo(item, question);
 				// 記述式の場合のみ、警告メッセージを出力する
-				if (question.answerType === ANSWER_TYPE_DESCRIPTION) {
-					log.printLog(LOG_TYPE_WARNING, "問題「" + question.sentence + "」の記述解答はフォーム作成後、手作業で反映をお願いします。");
+				if (question.answerType === ANSWER_TYPES.DESCRIPTION) {
+					log.printLog(LOG_TYPES.WARNING, "問題「" + question.sentence + "」の記述解答はフォーム作成後、手作業で反映をお願いします。");
 				}
 			}
 		}
@@ -53,13 +53,13 @@ class Form {
 	private createItem(answerType: string) {
 		switch (answerType) {
 			// 単一選択式の場合(ラジオボタン)
-			case ANSWER_TYPE_SELECTION_SINGLE:
+			case ANSWER_TYPES.SELECTION_SINGLE:
 				return this._form.addMultipleChoiceItem();
 			// 複数選択式の場合(チェックボックス)
-			case ANSWER_TYPE_SELECTION_MULTIPLE:
+			case ANSWER_TYPES.SELECTION_MULTIPLE:
 				return this._form.addCheckboxItem();
 			// 記述式の場合(テキスト)
-			case ANSWER_TYPE_DESCRIPTION:
+			case ANSWER_TYPES.DESCRIPTION:
 				return this._form.addTextItem();
 			// 判別不能
 			default:
@@ -95,7 +95,7 @@ class Form {
 		console.log(feedbackBuilder);
 
 		// 単一/複数選択式に共通する項目
-		if (question.answerType === ANSWER_TYPE_SELECTION_SINGLE || question.answerType === ANSWER_TYPE_SELECTION_MULTIPLE) {
+		if (question.answerType === ANSWER_TYPES.SELECTION_SINGLE || question.answerType === ANSWER_TYPES.SELECTION_MULTIPLE) {
 			// 選択肢情報
 			// let choices = [];
 			// for (const choice of question.choices) {
@@ -112,7 +112,7 @@ class Form {
 			}
 		}
 		// 記述式のみの項目
-		if (question.answerType === ANSWER_TYPE_DESCRIPTION) {
+		if (question.answerType === ANSWER_TYPES.DESCRIPTION) {
 			// フィードバック
 			if (feedbackBuilder) {
 				item.setGeneralFeedback(feedbackBuilder);

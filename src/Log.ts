@@ -1,13 +1,13 @@
 class Log {
 
-	private _logSheet: any; // ログ出力用シート
+	private _logSheet: GoogleAppsScript.Spreadsheet.Sheet; // ログ出力用シート
 
 	constructor(sheetName: string) {
 		this._logSheet = activeSpreadsheet.getSheetByName(sheetName);
 	}
 
-	public get logSheet(): any { return this._logSheet; }
-	public set logSheet(value: any) { this._logSheet = value; }
+	public get logSheet(): GoogleAppsScript.Spreadsheet.Sheet { return this._logSheet; }
+	public set logSheet(value: GoogleAppsScript.Spreadsheet.Sheet) { this._logSheet = value; }
 
 	public clearLog() {
 		if (this._logSheet.getLastRow() >= 2) {

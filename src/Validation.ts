@@ -15,7 +15,7 @@ class Validation {
 
 	public validate(validationType: string, args: Array<string>, logType: string): boolean {
 		const isCorrect = this.isCorrect(validationType, args);
-		if (logType && !isCorrect) {
+		if (logType !== LOG_TYPES.NONE && !isCorrect) {
 			let message = this.createMessage(validationType);
 			if (this.cellLocation) {
 				message += `"\n(${this.cellLocation.toString()})"`;

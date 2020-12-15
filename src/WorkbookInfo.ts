@@ -90,14 +90,14 @@ class Question {
 			const correctNumber = this._choices.filter(choice => choice.isCorrect).length;
 			// (選択肢が入力されているにも関わらず)正答の個数が0の場合、判別不能
 			if (correctNumber === 0) {
-				this._answerType = ANSWER_TYPE_OTHER;
-				log.printLog(LOG_TYPE_ERROR, "問題「" + this._sentence + "」は選択肢の正答が存在しないため、フォーム作成の対象外となります。");
+				this._answerType = ANSWER_TYPES.OTHER;
+				log.printLog(LOG_TYPES.ERROR, "問題「" + this._sentence + "」は選択肢の正答が存在しないため、フォーム作成の対象外となります。");
 				// 正答の個数が1の場合、単一選択式と判別する
 			} else if (correctNumber === 1) {
-				this._answerType = ANSWER_TYPE_SELECTION_SINGLE;
+				this._answerType = ANSWER_TYPES.SELECTION_SINGLE;
 				// 正答の個数が2以上の場合、複数選択式と判別する
 			} else {
-				this._answerType = ANSWER_TYPE_SELECTION_MULTIPLE;
+				this._answerType = ANSWER_TYPES.SELECTION_MULTIPLE;
 			}
 
 			//---------------------------
@@ -106,11 +106,11 @@ class Question {
 		} else {
 			// 選択肢、記述解答ともに存在しない場合、判別不能
 			if (this._answer === undefined) {
-				this._answerType = ANSWER_TYPE_OTHER;
-				log.printLog(LOG_TYPE_ERROR, "問題「" + this._sentence + "」は選択肢、記述解答ともに存在しないため、フォーム作成の対象外となります。");
+				this._answerType = ANSWER_TYPES.OTHER;
+				log.printLog(LOG_TYPES.ERROR, "問題「" + this._sentence + "」は選択肢、記述解答ともに存在しないため、フォーム作成の対象外となります。");
 				// 記述解答が存在する場合、記述式と判別する
 			} else {
-				this._answerType = ANSWER_TYPE_DESCRIPTION;
+				this._answerType = ANSWER_TYPES.DESCRIPTION;
 			}
 		}
 	}
@@ -135,7 +135,7 @@ class Question {
 			info += `"link ${index + 1}: ${link.url} (${link.displayText})\n"`;
 		});
 
-		log.printLog(LOG_TYPE_QUESTION, info);
+		log.printLog(LOG_TYPES.QUESTION, info);
 	}
 
 }

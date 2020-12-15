@@ -7,30 +7,41 @@ const DEBUG_MODE = true;
 const SHEET_NAME_LOG = "log";
 
 // ログ種別
-const LOG_TYPE_ERROR = "エラー";
-const LOG_TYPE_WARNING = "警告";
-const LOG_TYPE_QUESTION = "問題";
+const LOG_TYPES = {
+	ERROR:    "エラー",
+	WARNING:  "警告",
+	QUESTION: "問題",
+	NONE:     "出力対象外",
+};
 
 // データ種別
-const DATATYPE_WORKBOOK_TITLE = "問題集タイトル";
-const DATATYPE_SHEET_NAME = "シート名";
-const DATATYPE_CHAPTER_TITLE = "章タイトル";
-const DATATYPE_CHAPTER_DESCRIPTION = "章概要";
-const DATATYPE_QUESTION_SENTENCE = "問題文";
-const DATATYPE_HELP_TEXT = "問題文備考";
-const DATATYPE_CHOICE = "選択肢";
-const DATATYPE_ANSWER = "記述解答";
-const DATATYPE_EXPLANATION = "解説文";
-const DATATYPE_LINK = "リンク";
+const DATA_TYPES = {
+	WORKBOOK_TITLE:      "問題集タイトル",
+	SHEET_NAME:          "シート名",
+	CHAPTER_TITLE:       "章タイトル",
+	CHAPTER_DESCRIPTION: "章概要",
+	QUESTION_SENTENCE:   "問題文",
+	HELP_TEXT:           "問題文備考",
+	CHOICE:              "選択肢",
+	ANSWER:              "記述解答",
+	EXPLANATION:         "解説文",
+	LINK:                "リンク",
+};
 
 // 選択肢の正解
 const CHOICE_IS_CORRECT = "〇";
 
 // 解答形式
-const ANSWER_TYPE_SELECTION_SINGLE = "単一選択式";
-const ANSWER_TYPE_SELECTION_MULTIPLE = "複数選択式";
-const ANSWER_TYPE_DESCRIPTION = "記述式";
-const ANSWER_TYPE_OTHER = "判別不能";
+// const ANSWER_TYPES.SELECTION_SINGLE = "単一選択式";
+// const ANSWER_TYPES.SELECTION_MULTIPLE = "複数選択式";
+// const ANSWER_TYPES.DESCRIPTION = "記述式";
+// const ANSWER_TYPES.OTHER = "判別不能";
+const ANSWER_TYPES = {
+	SELECTION_SINGLE:   "単一選択式",
+	SELECTION_MULTIPLE: "複数選択式",
+	DESCRIPTION:        "記述式",
+	OTHER:              "判別不能",
+};
 
 // チェック種別
 const VALIDATION_TYPES = {

@@ -1,8 +1,8 @@
 class Sheet {
 
 	private _sheetName: string;
-	private _sheet: any;
-	private _values: Array<Array<string>>;
+	private _sheet: GoogleAppsScript.Spreadsheet.Sheet;
+	private _values: any[][];
 
 	constructor(sheetName: string) {
 		this._sheetName = sheetName;
@@ -12,10 +12,10 @@ class Sheet {
 
 	public get sheetName(): string { return this._sheetName; }
 	public set sheetName(value: string) { this._sheetName = value; }
-	public get sheet(): any { return this._sheet; }
-	public set sheet(value: any) { this._sheet = value; }
-	public get values(): Array<Array<string>> { return this._values; }
-	public set values(value: Array<Array<string>>) { this._values = value; }
+	public get sheet(): GoogleAppsScript.Spreadsheet.Sheet { return this._sheet; }
+	public set sheet(value: GoogleAppsScript.Spreadsheet.Sheet) { this._sheet = value; }
+	public get values(): any[][] { return this._values; }
+	public set values(value: any[][]) { this._values = value; }
 
 }
 
@@ -29,11 +29,11 @@ class FirstSheet extends Sheet {
 	public readWorkbookTitle(rowId: number) {
 		const dataType = this.values[rowId][0];
 		const dataTypeValidation = new Validation(dataType, new CellLocation(this.sheetName, rowId, 0));
-		const isCorrectDataType = dataTypeValidation.validate(VALIDATION_TYPES.DATA_TYPE, [DATATYPE_WORKBOOK_TITLE], LOG_TYPE_ERROR);
+		const isCorrectDataType = dataTypeValidation.validate(VALIDATION_TYPES.DATA_TYPE, [DATA_TYPES.WORKBOOK_TITLE], LOG_TYPES.ERROR);
 		if (isCorrectDataType) {
 			const workbookTitle = this.values[rowId][1];
 			const workbookTitleValidation = new Validation(workbookTitle, new CellLocation(this.sheetName, rowId, 1));
-			const isCorrectWorkbookTitle = workbookTitleValidation.validate(VALIDATION_TYPES.NOT_NULL, [], LOG_TYPE_ERROR);
+			const isCorrectWorkbookTitle = workbookTitleValidation.validate(VALIDATION_TYPES.NOT_NULL, [], LOG_TYPES.ERROR);
 			if (isCorrectWorkbookTitle) workbookInfo.workbookTitle = workbookTitle;
 		}
 	}
@@ -44,12 +44,12 @@ class FirstSheet extends Sheet {
 		for (let r = startRowId; r < this.sheet.getLastRow(); r++) {
 			const dataType = this.values[r][0];
 			const dataTypeValidation = new Validation(dataType, new CellLocation(this.sheetName, r, 0));
-			const isCorrectDataType = dataTypeValidation.validate(VALIDATION_TYPES.DATA_TYPE, [DATATYPE_SHEET_NAME], LOG_TYPE_ERROR);
+			const isCorrectDataType = dataTypeValidation.validate(VALIDATION_TYPES.DATA_TYPE, [DATA_TYPES.SHEET_NAME], LOG_TYPES.NONE);
 			if (!isCorrectDataType) continue;
 
 			const sheetName = this.values[r][1];
 			const sheetNameValidation = new Validation(sheetName, new CellLocation(this.sheetName, r, 1));
-			const isCorrectSheetName = sheetNameValidation.validate(VALIDATION_TYPES.NOT_NULL, [], LOG_TYPE_ERROR);
+			const isCorrectSheetName = sheetNameValidation.validate(VALIDATION_TYPES.NOT_NULL, [], LOG_TYPES.ERROR);
 			if (!isCorrectSheetName) continue;
 
 			sheetNames.push(sheetName);
@@ -77,15 +77,15 @@ class OtherSheet extends Sheet {
 		for (let r = startRowId; r < this.sheet.getLastRow(); r++) {
 			const dataType = this.values[r][0];
 			const dataTypeValidation = new Validation(dataType, new CellLocation(this.sheetName, r, 0));
-			const isCorrectDataType = dataTypeValidation.validate(VALIDATION_TYPES.NOT_NULL, [], undefined);
+			const isCorrectDataType = dataTypeValidation.validate(VALIDATION_TYPES.NOT_NULL, [], LOG_TYPES.NONE);
 			if (!isCorrectDataType) continue;
 
 			const value = this.values[r][1];
 			const valueValidation = new Validation(value, new CellLocation(this.sheetName, r, 1));
-			const isCorrectValue = valueValidation.validate(VALIDATION_TYPES.NOT_NULL, [], undefined);
+			const isCorrectValue = valueValidation.validate(VALIDATION_TYPES.NOT_NULL, [], LOG_TYPES.NONE);
 			if (!isCorrectValue) continue;
 
-			if (dataType === DATATYPE_CHAPTER_TITLE) {
+			if (dataType === DATA_TYPES.CHAPTER_TITLE) {
 				// 未登録の章情報、問題情報があれば追加する
 				if (chapter) chapter.addQuestion(question);
 				workbookInfo.addChapter(chapter);
@@ -94,30 +94,30 @@ class OtherSheet extends Sheet {
 				question = undefined;
 				if (DEBUG_MODE) console.log(value);
 
-			} else if (dataType === DATATYPE_CHAPTER_DESCRIPTION) {
+			} else if (dataType === DATA_TYPES.CHAPTER_DESCRIPTION) {
 				if (chapter) chapter.description = value;
 
-			} else if (dataType === DATATYPE_QUESTION_SENTENCE) {
+			} else if (dataType === DATA_TYPES.QUESTION_SENTENCE) {
 				// 未登録の問題情報があれば追加する
 				if (chapter) chapter.addQuestion(question);
 
 				question = new Question(value);
 				if (DEBUG_MODE) console.log(value);
 
-			} else if (dataType === DATATYPE_HELP_TEXT) {
+			} else if (dataType === DATA_TYPES.HELP_TEXT) {
 				if (question) question.helpText = value;
 
-			} else if (dataType === DATATYPE_CHOICE) {
+			} else if (dataType === DATA_TYPES.CHOICE) {
 				const isCorrect = this.values[r][2];
 				if (question) question.addChoice(new Choice(value, isCorrect));
 
-			} else if (dataType === DATATYPE_ANSWER) {
+			} else if (dataType === DATA_TYPES.ANSWER) {
 				if (question) question.answer = value;
 
-			} else if (dataType === DATATYPE_EXPLANATION) {
+			} else if (dataType === DATA_TYPES.EXPLANATION) {
 				if (question) question.explanation = value;
 
-			} else if (dataType === DATATYPE_LINK) {
+			} else if (dataType === DATA_TYPES.LINK) {
 				const displayText = this.values[r][2];
 				if (question) question.addLink(new Link(value, displayText));
 
