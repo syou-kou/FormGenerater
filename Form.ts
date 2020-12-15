@@ -1,25 +1,35 @@
 class Form {
 
-	constructor(chapter, folder) {
-		this.chapter = new Chapter();
-		this.chapter = chapter;       // 章情報
-		this.folder = folder;         // 保存先フォルダ
-		this.form = null;             // フォーム情報
+	private _chapter: Chapter;
+	private _folder: any;
+	private _form: any;
+
+	constructor(chapter: Chapter, folder: any) {
+		this._chapter = chapter;       // 章情報
+		this._folder = folder;         // 保存先フォルダ
+		this._form = null;             // フォーム情報
 	}
+
+	public get chapter(): Chapter { return this._chapter; }
+	public set chapter(value: Chapter) { this._chapter = value; }
+	public get folder(): any { return this._folder; }
+	public set folder(value: any) { this._folder = value; }
+	public get form(): any { return this._form; }
+	public set form(value: any) { this._form = value; }
 
 	// フォームを章単位で作成する
 	// 対象となる章のすべての問題情報を取得してから呼び出すこと
-	createForm() {
+	public createForm() {
 		// フォームを新規作成
-		this.form = FormApp.create(this.chapter.title);
+		this._form = FormApp.create(this._chapter.title);
 		// 章概要
-		this.form.setDescription(this.chapter.description);
+		this._form.setDescription(this._chapter.description);
 		// テスト形式オプション
-		this.form.setIsQuiz(true);
+		this._form.setIsQuiz(true);
 		// 進行状況バーを表示する
-		this.form.setProgressBar(true);
+		this._form.setProgressBar(true);
 		// 問題情報
-		for (const question of this.chapter.questions) {
+		for (const question of this._chapter.questions) {
 			// 問題情報を出力する
 			if (DEBUG_MODE) question.printQuestionInfo();
 			// 解答形式を判別する
@@ -27,7 +37,7 @@ class Form {
 			// 解答形式に応じてアイテムを作成する
 			let item = this.createItem(question.answerType);
 			// アイテム作成時のみ、フォームに問題情報を追加する
-			if (item !== undefined) {
+			if (item) {
 				this.setQuestionInfo(item, question);
 				// 記述式の場合のみ、警告メッセージを出力する
 				if (question.answerType === ANSWER_TYPE_DESCRIPTION) {
@@ -40,18 +50,17 @@ class Form {
 	}
 
 	// 解答形式に応じてアイテムを作成する
-	// private
-	createItem(answerType) {
+	private createItem(answerType: string): string {
 		switch (answerType) {
 			// 単一選択式の場合(ラジオボタン)
 			case ANSWER_TYPE_SELECTION_SINGLE:
-				return this.form.addMultipleChoiceItem();
+				return this._form.addMultipleChoiceItem();
 			// 複数選択式の場合(チェックボックス)
 			case ANSWER_TYPE_SELECTION_MULTIPLE:
-				return this.form.addCheckboxItem();
+				return this._form.addCheckboxItem();
 			// 記述式の場合(テキスト)
 			case ANSWER_TYPE_DESCRIPTION:
-				return this.form.addTextItem();
+				return this._form.addTextItem();
 			// 判別不能
 			default:
 				return undefined;
@@ -59,8 +68,7 @@ class Form {
 	}
 
 	// 解答形式に応じてフォームに問題情報を追加する
-	// private
-	setQuestionInfo(item, question) {
+	private setQuestionInfo(item: any, question: Question) {
 		// すべての解答形式に共通する項目
 		item.setTitle(question.sentence);    // 問題文
 		item.setHelpText(question.helpText); // 問題文備考
@@ -70,17 +78,17 @@ class Form {
 		// フィードバック内容(解答形式により呼び出すメソッドが異なる)
 		let feedback = FormApp.createFeedback();
 		// 解説文
-		const explanation = (question.explanation === undefined || question.explanation === "") ? "解説文はまだ登録されていません" : question.explanation;
+		const explanation = (!question.explanation) ? "解説文はまだ登録されていません" : question.explanation;
 		feedback.setText(explanation);
 		// リンク
 		console.log(question.links.length);
 		if (question.links.length > 0) {
 			for (const link of question.links) {
-				const url = (link.url === undefined || link.url === "") ? "No links" : link.url;
-				const displayText = (link.displayText === undefined || link.displayText === "") ? "リンク" : link.displayText;
+				const url = (!link.url) ? "No links" : link.url;
+				const displayText = (!link.displayText) ? "リンク" : link.displayText;
 				if (DEBUG_MODE) console.log(url);
 				if (DEBUG_MODE) console.log(displayText);
-				feedback.addLink(url, displayText);
+				feedback.addLink(new Link(url, displayText));
 			}
 		}
 		const feedbackBuilder = feedback.build();
@@ -89,15 +97,16 @@ class Form {
 		// 単一/複数選択式に共通する項目
 		if (question.answerType === ANSWER_TYPE_SELECTION_SINGLE || question.answerType === ANSWER_TYPE_SELECTION_MULTIPLE) {
 			// 選択肢情報
-			let choices = [];
-			for (const choice of question.choices) {
-				choices.push(item.createChoice(choice.sentence, choice.isCorrect));
-			}
+			// let choices = [];
+			// for (const choice of question.choices) {
+			// 	choices.push(item.createChoice(choice.sentence, choice.isCorrect));
+			// }
+			const choices = question.choices.map(choice => item.createChoice(choice.sentence, choice.isCorrect));
 			item.setChoices(choices);
 			// その他項目表示オプション
 			item.showOtherOption(false);
 			// 正解/不正解時フィードバック
-			if (feedbackBuilder !== undefined) {
+			if (feedbackBuilder) {
 				item.setFeedbackForCorrect(feedbackBuilder);
 				item.setFeedbackForIncorrect(feedbackBuilder);
 			}
@@ -105,17 +114,16 @@ class Form {
 		// 記述式のみの項目
 		if (question.answerType === ANSWER_TYPE_DESCRIPTION) {
 			// フィードバック
-			if (feedbackBuilder !== undefined) {
+			if (feedbackBuilder) {
 				item.setGeneralFeedback(feedbackBuilder);
 			}
 		}
 	}
 
 	// 作成したフォームを保存先フォルダに移動する
-	// private
-	moveForm() {
-		const file = DriveApp.getFileById(this.form.getId());
-		this.folder.addFile(file);
+	private moveForm() {
+		const file = DriveApp.getFileById(this._form.getId());
+		this._folder.addFile(file);
 		DriveApp.getRootFolder().removeFile(file);
 	}
 
