@@ -1,4 +1,4 @@
-const activeSpreadsheet: any = SpreadsheetApp.getActiveSpreadsheet();
+const activeSpreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
 let log: Log;
 let workbookInfo: WorkbookInfo;
 

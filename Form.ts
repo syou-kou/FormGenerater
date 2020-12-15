@@ -1,8 +1,8 @@
 class Form {
 
 	private _chapter: Chapter;
-	private _folder: any;
-	private _form: any;
+	private _folder: GoogleAppsScript.Drive.Folder;
+	private _form: GoogleAppsScript.Forms.Form;
 
 	constructor(chapter: Chapter, folder: any) {
 		this._chapter = chapter;       // 章情報
@@ -12,10 +12,10 @@ class Form {
 
 	public get chapter(): Chapter { return this._chapter; }
 	public set chapter(value: Chapter) { this._chapter = value; }
-	public get folder(): any { return this._folder; }
-	public set folder(value: any) { this._folder = value; }
-	public get form(): any { return this._form; }
-	public set form(value: any) { this._form = value; }
+	public get folder(): GoogleAppsScript.Drive.Folder { return this._folder; }
+	public set folder(value: GoogleAppsScript.Drive.Folder) { this._folder = value; }
+	public get form(): GoogleAppsScript.Forms.Form { return this._form; }
+	public set form(value: GoogleAppsScript.Forms.Form) { this._form = value; }
 
 	// フォームを章単位で作成する
 	// 対象となる章のすべての問題情報を取得してから呼び出すこと
@@ -50,7 +50,7 @@ class Form {
 	}
 
 	// 解答形式に応じてアイテムを作成する
-	private createItem(answerType: string): string {
+	private createItem(answerType: string) {
 		switch (answerType) {
 			// 単一選択式の場合(ラジオボタン)
 			case ANSWER_TYPE_SELECTION_SINGLE:
@@ -88,7 +88,7 @@ class Form {
 				const displayText = (!link.displayText) ? "リンク" : link.displayText;
 				if (DEBUG_MODE) console.log(url);
 				if (DEBUG_MODE) console.log(displayText);
-				feedback.addLink(new Link(url, displayText));
+				feedback.addLink(url, displayText);
 			}
 		}
 		const feedbackBuilder = feedback.build();
