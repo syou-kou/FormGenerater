@@ -2,7 +2,7 @@ const activeSpreadsheet = SpreadsheetApp.getActiveSpreadsheet();
 let log;
 let workbookInfo;
 
-class FormGenerater {
+class FormGenerator {
 
 	constructor() {
 		log = new Log();
