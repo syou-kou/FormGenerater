@@ -9,9 +9,9 @@ class Choice {
 	}
 
 	public get sentence(): string { return this._sentence; }
-	public set sentence(value: string) { this._sentence = value; }
+	// public set sentence(value: string) { this._sentence = value; }
 	public get isCorrect(): boolean { return this._isCorrect; }
-	public set isCorrect(value: boolean) { this._isCorrect = value; }
+	// public set isCorrect(value: boolean) { this._isCorrect = value; }
 
 }
 
@@ -26,9 +26,9 @@ class Link {
 	}
 
 	public get url(): string { return this._url; }
-	public set url(value: string) { this._url = value; }
+	// public set url(value: string) { this._url = value; }
 	public get displayText(): string { return this._displayText; }
-	public set displayText(value: string) { this._displayText = value; }
+	// public set displayText(value: string) { this._displayText = value; }
 }
 
 class Question {
@@ -51,21 +51,6 @@ class Question {
 		this._answerType = "";
 	}
 
-	public get sentence(): string { return this._sentence; }
-	public set sentence(value: string) { this._sentence = value; }
-	public get helpText(): string { return this._helpText; }
-	public set helpText(value: string) { this._helpText = value; }
-	public get choices(): Array<Choice> { return this._choices; }
-	public set choices(value: Array<Choice>) { this._choices = value; }
-	public get answer(): string { return this._answer; }
-	public set answer(value: string) { this._answer = value; }
-	public get explanation(): string { return this._explanation; }
-	public set explanation(value: string) { this._explanation = value; }
-	public get links(): Array<Link> { return this._links; }
-	public set links(value: Array<Link>) { this._links = value; }
-	public get answerType(): string { return this._answerType; }
-	public set answerType(value: string) { this._answerType = value; }
-
 	public addChoice(choice: Choice) {
 		if (choice) this._choices.push(choice);
 	}
@@ -76,17 +61,9 @@ class Question {
 	// 解答形式を判別し、判別不能の場合はメッセージを出力する
 	// 問題情報をすべて取得してから呼び出すこと
 	public setAnswerType() {
-		//-------------------------
 		// 選択肢が入力されている場合
-		//-------------------------
 		if (this._choices.length > 0) {
 			// 正答の個数を取得する
-			// let correctNumber = 0;
-			// for (const choice of this._choices) {
-			// 	if (choice.isCorrect) {
-			// 		correctNumber++;
-			// 	}
-			// }
 			const correctNumber = this._choices.filter(choice => choice.isCorrect).length;
 			// (選択肢が入力されているにも関わらず)正答の個数が0の場合、判別不能
 			if (correctNumber === 0) {
@@ -100,9 +77,7 @@ class Question {
 				this._answerType = ANSWER_TYPES.SELECTION_MULTIPLE;
 			}
 
-			//---------------------------
-			// 選択肢が入力されていない場合
-			//---------------------------
+		// 選択肢が入力されていない場合
 		} else {
 			// 選択肢、記述解答ともに存在しない場合、判別不能
 			if (this._answer === undefined) {
@@ -118,25 +93,31 @@ class Question {
 	// 問題情報を出力する
 	public printQuestionInfo() {
 		let info = `"sentence: ${this._sentence}\n"`;
-		// for (let n = 0; n < this._choices.length; n++) {
-		// 	const choice = this._choices[n];
-		// 	
-		// }
 		this._choices.forEach((choice, index) => {
 			info += `"choice ${index + 1}: ${choice.sentence} (${choice.isCorrect})\n"`;
 		});
 		info += `"answer: ${this._answer}\n"`;
 		info += `"explanation: ${this._explanation}\n"`;
-		// for (let n = 0; n < this._links.length; n++) {
-		// 	const link = this._links[n];
-		// 	info += "link " + (n + 1) + ": " + link.url + " (" + link.displayText + ")\n";
-		// }
 		this._links.forEach((link, index) => {
 			info += `"link ${index + 1}: ${link.url} (${link.displayText})\n"`;
 		});
-
 		log.printLog(LOG_TYPES.QUESTION, info);
 	}
+
+	public get sentence(): string { return this._sentence; }
+	// public set sentence(value: string) { this._sentence = value; }
+	public get helpText(): string { return this._helpText; }
+	public set helpText(value: string) { this._helpText = value; }
+	public get choices(): Array<Choice> { return this._choices; }
+	public set choices(value: Array<Choice>) { this._choices = value; }
+	public get answer(): string { return this._answer; }
+	public set answer(value: string) { this._answer = value; }
+	public get explanation(): string { return this._explanation; }
+	public set explanation(value: string) { this._explanation = value; }
+	public get links(): Array<Link> { return this._links; }
+	public set links(value: Array<Link>) { this._links = value; }
+	public get answerType(): string { return this._answerType; }
+	public set answerType(value: string) { this._answerType = value; }
 
 }
 
@@ -152,16 +133,16 @@ class Chapter {
 		this._questions = [];
 	}
 
+	public addQuestion(question: Question) {
+		if (question) this._questions.push(question);
+	}
+
 	public get title(): string { return this._title; }
-	public set title(value: string) { this._title = value; }
+	// public set title(value: string) { this._title = value; }
 	public get description(): string { return this._description; }
 	public set description(value: string) { this._description = value; }
 	public get questions(): Array<Question> { return this._questions; }
 	public set questions(value: Array<Question>) { this._questions = value; }
-
-	public addQuestion(question: Question) {
-		if (question) this._questions.push(question);
-	}
 
 }
 
@@ -177,15 +158,15 @@ class WorkbookInfo {
 		this._chapters = [];
 	}
 
+	public addChapter(chapter: Chapter) {
+		if (chapter !== undefined) this._chapters.push(chapter);
+	}
+
 	public get workbookTitle(): string { return this._workbookTitle; }
 	public set workbookTitle(value: string) { this._workbookTitle = value; }
 	public get sheetNames(): Array<string> { return this._sheetNames; }
 	public set sheetNames(value: Array<string>) { this._sheetNames = value; }
 	public get chapters(): Array<Chapter> { return this._chapters; }
 	public set chapters(value: Array<Chapter>) { this._chapters = value; }
-
-	public addChapter(chapter: Chapter) {
-		if (chapter !== undefined) this._chapters.push(chapter);
-	}
 
 }

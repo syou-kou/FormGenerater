@@ -1,4 +1,4 @@
-class Validation {
+class Validator {
 
 	private _value: string;
 	private _cellLocation: CellLocation;
@@ -7,11 +7,6 @@ class Validation {
 		this._value = value;
 		this._cellLocation = cellLocation;
 	}
-
-	public get value(): string { return this._value; }
-	public set value(value: string) { this._value = value; }
-	public get cellLocation(): CellLocation { return this._cellLocation; }
-	public set cellLocation(value: CellLocation) { this._cellLocation = value; }
 
 	public validate(validationType: string, args: Array<string>, logType: string): boolean {
 		const isCorrect = this.isCorrect(validationType, args);
@@ -38,5 +33,10 @@ class Validation {
 			case VALIDATION_TYPES.DATA_TYPE: return this.value + "ではありません";
 		}
 	}
+
+	public get value(): string { return this._value; }
+	// public set value(value: string) { this._value = value; }
+	public get cellLocation(): CellLocation { return this._cellLocation; }
+	// public set cellLocation(value: CellLocation) { this._cellLocation = value; }
 
 }

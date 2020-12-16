@@ -32,10 +32,6 @@ const DATA_TYPES = {
 const CHOICE_IS_CORRECT = "〇";
 
 // 解答形式
-// const ANSWER_TYPES.SELECTION_SINGLE = "単一選択式";
-// const ANSWER_TYPES.SELECTION_MULTIPLE = "複数選択式";
-// const ANSWER_TYPES.DESCRIPTION = "記述式";
-// const ANSWER_TYPES.OTHER = "判別不能";
 const ANSWER_TYPES = {
 	SELECTION_SINGLE:   "単一選択式",
 	SELECTION_MULTIPLE: "複数選択式",
@@ -47,4 +43,4 @@ const ANSWER_TYPES = {
 const VALIDATION_TYPES = {
 	NOT_NULL:  "NOT_NULL",
 	DATA_TYPE: "DATA_TYPE",
-}
+};

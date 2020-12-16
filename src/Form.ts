@@ -10,13 +10,6 @@ class Form {
 		this._form = null;             // フォーム情報
 	}
 
-	public get chapter(): Chapter { return this._chapter; }
-	public set chapter(value: Chapter) { this._chapter = value; }
-	public get folder(): GoogleAppsScript.Drive.Folder { return this._folder; }
-	public set folder(value: GoogleAppsScript.Drive.Folder) { this._folder = value; }
-	public get form(): GoogleAppsScript.Forms.Form { return this._form; }
-	public set form(value: GoogleAppsScript.Forms.Form) { this._form = value; }
-
 	// フォームを章単位で作成する
 	// 対象となる章のすべての問題情報を取得してから呼び出すこと
 	public createForm() {
@@ -97,10 +90,6 @@ class Form {
 		// 単一/複数選択式に共通する項目
 		if (question.answerType === ANSWER_TYPES.SELECTION_SINGLE || question.answerType === ANSWER_TYPES.SELECTION_MULTIPLE) {
 			// 選択肢情報
-			// let choices = [];
-			// for (const choice of question.choices) {
-			// 	choices.push(item.createChoice(choice.sentence, choice.isCorrect));
-			// }
 			const choices = question.choices.map(choice => item.createChoice(choice.sentence, choice.isCorrect));
 			item.setChoices(choices);
 			// その他項目表示オプション
@@ -126,5 +115,12 @@ class Form {
 		this._folder.addFile(file);
 		DriveApp.getRootFolder().removeFile(file);
 	}
+
+	public get chapter(): Chapter { return this._chapter; }
+	// public set chapter(value: Chapter) { this._chapter = value; }
+	public get folder(): GoogleAppsScript.Drive.Folder { return this._folder; }
+	// public set folder(value: GoogleAppsScript.Drive.Folder) { this._folder = value; }
+	public get form(): GoogleAppsScript.Forms.Form { return this._form; }
+	public set form(value: GoogleAppsScript.Forms.Form) { this._form = value; }
 
 }

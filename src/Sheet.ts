@@ -11,11 +11,11 @@ class Sheet {
 	}
 
 	public get sheetName(): string { return this._sheetName; }
-	public set sheetName(value: string) { this._sheetName = value; }
+	// public set sheetName(value: string) { this._sheetName = value; }
 	public get sheet(): GoogleAppsScript.Spreadsheet.Sheet { return this._sheet; }
-	public set sheet(value: GoogleAppsScript.Spreadsheet.Sheet) { this._sheet = value; }
+	// public set sheet(value: GoogleAppsScript.Spreadsheet.Sheet) { this._sheet = value; }
 	public get values(): any[][] { return this._values; }
-	public set values(value: any[][]) { this._values = value; }
+	// public set values(value: any[][]) { this._values = value; }
 
 }
 
@@ -28,11 +28,11 @@ class FirstSheet extends Sheet {
 	// 第(rowId + 1)行から問題集タイトルを取得する
 	public readWorkbookTitle(rowId: number) {
 		const dataType = this.values[rowId][0];
-		const dataTypeValidation = new Validation(dataType, new CellLocation(this.sheetName, rowId, 0));
+		const dataTypeValidation = new Validator(dataType, new CellLocation(this.sheetName, rowId, 0));
 		const isCorrectDataType = dataTypeValidation.validate(VALIDATION_TYPES.DATA_TYPE, [DATA_TYPES.WORKBOOK_TITLE], LOG_TYPES.ERROR);
 		if (isCorrectDataType) {
 			const workbookTitle = this.values[rowId][1];
-			const workbookTitleValidation = new Validation(workbookTitle, new CellLocation(this.sheetName, rowId, 1));
+			const workbookTitleValidation = new Validator(workbookTitle, new CellLocation(this.sheetName, rowId, 1));
 			const isCorrectWorkbookTitle = workbookTitleValidation.validate(VALIDATION_TYPES.NOT_NULL, [], LOG_TYPES.ERROR);
 			if (isCorrectWorkbookTitle) workbookInfo.workbookTitle = workbookTitle;
 		}
@@ -43,12 +43,12 @@ class FirstSheet extends Sheet {
 		let sheetNames = [];
 		for (let r = startRowId; r < this.sheet.getLastRow(); r++) {
 			const dataType = this.values[r][0];
-			const dataTypeValidation = new Validation(dataType, new CellLocation(this.sheetName, r, 0));
+			const dataTypeValidation = new Validator(dataType, new CellLocation(this.sheetName, r, 0));
 			const isCorrectDataType = dataTypeValidation.validate(VALIDATION_TYPES.DATA_TYPE, [DATA_TYPES.SHEET_NAME], LOG_TYPES.NONE);
 			if (!isCorrectDataType) continue;
 
 			const sheetName = this.values[r][1];
-			const sheetNameValidation = new Validation(sheetName, new CellLocation(this.sheetName, r, 1));
+			const sheetNameValidation = new Validator(sheetName, new CellLocation(this.sheetName, r, 1));
 			const isCorrectSheetName = sheetNameValidation.validate(VALIDATION_TYPES.NOT_NULL, [], LOG_TYPES.ERROR);
 			if (!isCorrectSheetName) continue;
 
@@ -67,21 +67,18 @@ class OtherSheet extends Sheet {
 		this._isLastSheet = isLastSheet;
 	}
 
-	public get isLastSheet(): boolean { return this._isLastSheet; }
-	public set isLastSheet(value: boolean) { this._isLastSheet = value; }
-
 	// 第(startRowId + 1)行以降から問題情報をすべて取得する
 	public readQuestionInfo(startRowId: number) {
 		let chapter: Chapter;
 		let question: Question;
 		for (let r = startRowId; r < this.sheet.getLastRow(); r++) {
 			const dataType = this.values[r][0];
-			const dataTypeValidation = new Validation(dataType, new CellLocation(this.sheetName, r, 0));
+			const dataTypeValidation = new Validator(dataType, new CellLocation(this.sheetName, r, 0));
 			const isCorrectDataType = dataTypeValidation.validate(VALIDATION_TYPES.NOT_NULL, [], LOG_TYPES.NONE);
 			if (!isCorrectDataType) continue;
 
 			const value = this.values[r][1];
-			const valueValidation = new Validation(value, new CellLocation(this.sheetName, r, 1));
+			const valueValidation = new Validator(value, new CellLocation(this.sheetName, r, 1));
 			const isCorrectValue = valueValidation.validate(VALIDATION_TYPES.NOT_NULL, [], LOG_TYPES.NONE);
 			if (!isCorrectValue) continue;
 
@@ -128,5 +125,8 @@ class OtherSheet extends Sheet {
 		if (chapter) chapter.addQuestion(question);
 		workbookInfo.addChapter(chapter);
 	}
+
+	public get isLastSheet(): boolean { return this._isLastSheet; }
+	// public set isLastSheet(value: boolean) { this._isLastSheet = value; }
 
 }

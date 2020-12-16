@@ -1,3 +1,3 @@
 function main() {
-	new FormGenerator().main();
+	new FormGenerator().run();
 }
