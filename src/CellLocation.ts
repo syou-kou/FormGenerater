@@ -26,13 +26,19 @@ export class CellLocation {
 	public get sheetName(): string {
 		return this._sheetName;
 	}
-	// public set sheetName(value: string) { this._sheetName = value; }
+	// public set sheetName(value: string) { 
+	// 	this._sheetName = value; 
+	// }
 	public get rowId(): number {
 		return this._rowId;
 	}
-	// public set rowId(value: number) { this._rowId = value; }
+	// public set rowId(value: number) {
+	// 	this._rowId = value;
+	// }
 	public get colId(): number {
 		return this._colId;
 	}
-	// public set colId(value: number) { this._colId = value; }
+	// public set colId(value: number) {
+	// 	this._colId = value;
+	// }
 }

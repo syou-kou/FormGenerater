@@ -216,7 +216,7 @@ export class WorkbookInfo {
 	}
 
 	public addChapter(chapter: Chapter): void {
-		if (chapter !== undefined) this._chapters.push(chapter);
+		if (chapter) this._chapters.push(chapter);
 	}
 
 	public get workbookTitle(): string {

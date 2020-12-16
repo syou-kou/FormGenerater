@@ -23,5 +23,7 @@ export class Log {
 	public get logSheet(): GoogleAppsScript.Spreadsheet.Sheet {
 		return this._logSheet;
 	}
-	// public set logSheet(value: GoogleAppsScript.Spreadsheet.Sheet) { this._logSheet = value; }
+	// public set logSheet(value: GoogleAppsScript.Spreadsheet.Sheet) {
+	// 	this._logSheet = value;
+	// }
 }

@@ -43,19 +43,19 @@ export class FirstSheet extends Sheet {
 	// 第(rowId + 1)行から問題集タイトルを取得する
 	public readWorkbookTitle(rowId: number): void {
 		const dataType = this.values[rowId][0];
-		const dataTypeValidation = new Validator(dataType, new CellLocation(this.sheetName, rowId, 0));
-		const isCorrectDataType = dataTypeValidation.validate(
+		const dataTypeValidator = new Validator(dataType, new CellLocation(this.sheetName, rowId, 0));
+		const isCorrectDataType = dataTypeValidator.validate(
 			VALIDATION_TYPES.DATA_TYPE,
 			[DATA_TYPES.WORKBOOK_TITLE],
 			LOG_TYPES.ERROR
 		);
 		if (isCorrectDataType) {
 			const workbookTitle = this.values[rowId][1];
-			const workbookTitleValidation = new Validator(
+			const workbookTitleValidator = new Validator(
 				workbookTitle,
 				new CellLocation(this.sheetName, rowId, 1)
 			);
-			const isCorrectWorkbookTitle = workbookTitleValidation.validate(
+			const isCorrectWorkbookTitle = workbookTitleValidator.validate(
 				VALIDATION_TYPES.NOT_NULL,
 				[],
 				LOG_TYPES.ERROR
@@ -69,8 +69,8 @@ export class FirstSheet extends Sheet {
 		const sheetNames = [];
 		for (let r = startRowId; r < this.sheet.getLastRow(); r++) {
 			const dataType = this.values[r][0];
-			const dataTypeValidation = new Validator(dataType, new CellLocation(this.sheetName, r, 0));
-			const isCorrectDataType = dataTypeValidation.validate(
+			const dataTypeValidator = new Validator(dataType, new CellLocation(this.sheetName, r, 0));
+			const isCorrectDataType = dataTypeValidator.validate(
 				VALIDATION_TYPES.DATA_TYPE,
 				[DATA_TYPES.SHEET_NAME],
 				LOG_TYPES.NONE
@@ -78,8 +78,8 @@ export class FirstSheet extends Sheet {
 			if (!isCorrectDataType) continue;
 
 			const sheetName = this.values[r][1];
-			const sheetNameValidation = new Validator(sheetName, new CellLocation(this.sheetName, r, 1));
-			const isCorrectSheetName = sheetNameValidation.validate(
+			const sheetNameValidator = new Validator(sheetName, new CellLocation(this.sheetName, r, 1));
+			const isCorrectSheetName = sheetNameValidator.validate(
 				VALIDATION_TYPES.NOT_NULL,
 				[],
 				LOG_TYPES.ERROR
@@ -106,8 +106,8 @@ export class OtherSheet extends Sheet {
 		let question: Question;
 		for (let r = startRowId; r < this.sheet.getLastRow(); r++) {
 			const dataType = this.values[r][0];
-			const dataTypeValidation = new Validator(dataType, new CellLocation(this.sheetName, r, 0));
-			const isCorrectDataType = dataTypeValidation.validate(
+			const dataTypeValidator = new Validator(dataType, new CellLocation(this.sheetName, r, 0));
+			const isCorrectDataType = dataTypeValidator.validate(
 				VALIDATION_TYPES.NOT_NULL,
 				[],
 				LOG_TYPES.NONE
@@ -115,42 +115,57 @@ export class OtherSheet extends Sheet {
 			if (!isCorrectDataType) continue;
 
 			const value = this.values[r][1];
-			const valueValidation = new Validator(value, new CellLocation(this.sheetName, r, 1));
-			const isCorrectValue = valueValidation.validate(
+			const valueValidator = new Validator(value, new CellLocation(this.sheetName, r, 1));
+			const isCorrectValue = valueValidator.validate(
 				VALIDATION_TYPES.NOT_NULL,
 				[],
 				LOG_TYPES.NONE
 			);
 			if (!isCorrectValue) continue;
 
-			if (dataType === DATA_TYPES.CHAPTER_TITLE) {
-				// 未登録の章情報、問題情報があれば追加する
-				if (chapter) chapter.addQuestion(question);
-				workbookInfo.addChapter(chapter);
-
-				chapter = new Chapter(value);
-				question = undefined;
-				if (DEBUG_MODE) console.log(value);
-			} else if (dataType === DATA_TYPES.CHAPTER_DESCRIPTION) {
-				if (chapter) chapter.description = value;
-			} else if (dataType === DATA_TYPES.QUESTION_SENTENCE) {
-				// 未登録の問題情報があれば追加する
-				if (chapter) chapter.addQuestion(question);
-
-				question = new Question(value);
-				if (DEBUG_MODE) console.log(value);
-			} else if (dataType === DATA_TYPES.HELP_TEXT) {
-				if (question) question.helpText = value;
-			} else if (dataType === DATA_TYPES.CHOICE) {
-				const isCorrect = this.values[r][2];
-				if (question) question.addChoice(new Choice(value, isCorrect));
-			} else if (dataType === DATA_TYPES.ANSWER) {
-				if (question) question.answer = value;
-			} else if (dataType === DATA_TYPES.EXPLANATION) {
-				if (question) question.explanation = value;
-			} else if (dataType === DATA_TYPES.LINK) {
-				const displayText = this.values[r][2];
-				if (question) question.addLink(new Link(value, displayText));
+			switch (dataType) {
+				case DATA_TYPES.CHAPTER_TITLE: {
+					// 未登録の章情報、問題情報があれば追加する
+					if (chapter) chapter.addQuestion(question);
+					workbookInfo.addChapter(chapter);
+					chapter = new Chapter(value);
+					question = undefined;
+					if (DEBUG_MODE) console.log(value);
+					break;
+				}
+				case DATA_TYPES.CHAPTER_DESCRIPTION: {
+					if (chapter) chapter.description = value;
+					break;
+				}
+				case DATA_TYPES.QUESTION_SENTENCE: {
+					// 未登録の問題情報があれば追加する
+					if (chapter) chapter.addQuestion(question);
+					question = new Question(value);
+					if (DEBUG_MODE) console.log(value);
+					break;
+				}
+				case DATA_TYPES.HELP_TEXT: {
+					if (question) question.helpText = value;
+					break;
+				}
+				case DATA_TYPES.CHOICE: {
+					const isCorrect = this.values[r][2];
+					if (question) question.addChoice(new Choice(value, isCorrect));
+					break;
+				}
+				case DATA_TYPES.ANSWER: {
+					if (question) question.answer = value;
+					break;
+				}
+				case DATA_TYPES.EXPLANATION: {
+					if (question) question.explanation = value;
+					break;
+				}
+				case DATA_TYPES.LINK: {
+					const displayText = this.values[r][2];
+					if (question) question.addLink(new Link(value, displayText));
+					break;
+				}
 			}
 		}
 
@@ -162,5 +177,7 @@ export class OtherSheet extends Sheet {
 	public get isLastSheet(): boolean {
 		return this._isLastSheet;
 	}
-	// public set isLastSheet(value: boolean) { this._isLastSheet = value; }
+	// public set isLastSheet(value: boolean) {
+	// 	this._isLastSheet = value;
+	// }
 }
