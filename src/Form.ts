@@ -23,29 +23,29 @@ export class Form {
 			if (DEBUG_MODE) question.printQuestionInfo();
 			question.setAnswerType();
 			switch (question.answerType) {
-				case ANSWER_TYPES.SELECTION_SINGLE: {
-					const multipleChoiceItem = this._form.addMultipleChoiceItem();
-					this.setQuestionInfoOfAllType(multipleChoiceItem, question);
-					this.setQuestionInfoOfSelectionType(multipleChoiceItem, question);
-					break;
-				}
-				case ANSWER_TYPES.SELECTION_MULTIPLE: {
-					const checkboxItem = this._form.addCheckboxItem();
-					this.setQuestionInfoOfAllType(checkboxItem, question);
-					this.setQuestionInfoOfSelectionType(checkboxItem, question);
-					break;
-				}
-				case ANSWER_TYPES.DESCRIPTION: {
-					const textItem = this._form.addTextItem();
-					this.setQuestionInfoOfAllType(textItem, question);
-					this.setQuestionInfoOfTextType(textItem, question);
-					// 記述式の場合のみ、警告メッセージを出力する
-					log.printLog(
-						LOG_TYPES.WARNING,
-						`'問題「${question.sentence}」の記述解答はフォーム作成後、手作業で反映をお願いします。'`
-					);
-					break;
-				}
+			case ANSWER_TYPES.SELECTION_SINGLE: {
+				const multipleChoiceItem = this._form.addMultipleChoiceItem();
+				this.setQuestionInfoOfAllType(multipleChoiceItem, question);
+				this.setQuestionInfoOfSelectionType(multipleChoiceItem, question);
+				break;
+			}
+			case ANSWER_TYPES.SELECTION_MULTIPLE: {
+				const checkboxItem = this._form.addCheckboxItem();
+				this.setQuestionInfoOfAllType(checkboxItem, question);
+				this.setQuestionInfoOfSelectionType(checkboxItem, question);
+				break;
+			}
+			case ANSWER_TYPES.DESCRIPTION: {
+				const textItem = this._form.addTextItem();
+				this.setQuestionInfoOfAllType(textItem, question);
+				this.setQuestionInfoOfTextType(textItem, question);
+				// 記述式の場合のみ、警告メッセージを出力する
+				log.printLog(
+					LOG_TYPES.WARNING,
+					`'問題「${question.sentence}」の記述解答はフォーム作成後、手作業で反映をお願いします。'`
+				);
+				break;
+			}
 			}
 		}
 		// 作成したフォームを保存先フォルダに移動する

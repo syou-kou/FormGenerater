@@ -25,19 +25,19 @@ export class Validator {
 
 	private isCorrect(validationType: string, args: Array<string>): boolean {
 		switch (validationType) {
-			case VALIDATION_TYPES.NOT_NULL:
-				return this.value !== '';
-			case VALIDATION_TYPES.DATA_TYPE:
-				return this.value === args[0];
+		case VALIDATION_TYPES.NOT_NULL:
+			return this.value !== '';
+		case VALIDATION_TYPES.DATA_TYPE:
+			return (args[0] && this.value === args[0]);
 		}
 	}
 
 	private createMessage(validationType: string): string {
 		switch (validationType) {
-			case VALIDATION_TYPES.NOT_NULL:
-				return this.value + 'が取得できません';
-			case VALIDATION_TYPES.DATA_TYPE:
-				return this.value + 'ではありません';
+		case VALIDATION_TYPES.NOT_NULL:
+			return this.value + 'が取得できません';
+		case VALIDATION_TYPES.DATA_TYPE:
+			return this.value + 'ではありません';
 		}
 	}
 

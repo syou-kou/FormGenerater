@@ -66,7 +66,6 @@ export class FirstSheet extends Sheet {
 
 	// 第(startRowId + 1)行以降からシート名をすべて取得する
 	public readSheetNames(startRowId: number): void {
-		const sheetNames = [];
 		for (let r = startRowId; r < this.sheet.getLastRow(); r++) {
 			const dataType = this.values[r][0];
 			const dataTypeValidator = new Validator(dataType, new CellLocation(this.sheetName, r, 0));
@@ -84,11 +83,8 @@ export class FirstSheet extends Sheet {
 				[],
 				LOG_TYPES.ERROR
 			);
-			if (!isCorrectSheetName) continue;
-
-			sheetNames.push(sheetName);
+			if (isCorrectSheetName) workbookInfo.addSheetName(sheetName);
 		}
-		workbookInfo.sheetNames = sheetNames;
 	}
 }
 
@@ -124,48 +120,48 @@ export class OtherSheet extends Sheet {
 			if (!isCorrectValue) continue;
 
 			switch (dataType) {
-				case DATA_TYPES.CHAPTER_TITLE: {
-					// 未登録の章情報、問題情報があれば追加する
-					if (chapter) chapter.addQuestion(question);
-					workbookInfo.addChapter(chapter);
-					chapter = new Chapter(value);
-					question = undefined;
-					if (DEBUG_MODE) console.log(value);
-					break;
-				}
-				case DATA_TYPES.CHAPTER_DESCRIPTION: {
-					if (chapter) chapter.description = value;
-					break;
-				}
-				case DATA_TYPES.QUESTION_SENTENCE: {
-					// 未登録の問題情報があれば追加する
-					if (chapter) chapter.addQuestion(question);
-					question = new Question(value);
-					if (DEBUG_MODE) console.log(value);
-					break;
-				}
-				case DATA_TYPES.HELP_TEXT: {
-					if (question) question.helpText = value;
-					break;
-				}
-				case DATA_TYPES.CHOICE: {
-					const isCorrect = this.values[r][2];
-					if (question) question.addChoice(new Choice(value, isCorrect));
-					break;
-				}
-				case DATA_TYPES.ANSWER: {
-					if (question) question.answer = value;
-					break;
-				}
-				case DATA_TYPES.EXPLANATION: {
-					if (question) question.explanation = value;
-					break;
-				}
-				case DATA_TYPES.LINK: {
-					const displayText = this.values[r][2];
-					if (question) question.addLink(new Link(value, displayText));
-					break;
-				}
+			case DATA_TYPES.CHAPTER_TITLE: {
+				// 未登録の章情報、問題情報があれば追加する
+				if (chapter) chapter.addQuestion(question);
+				workbookInfo.addChapter(chapter);
+				chapter = new Chapter(value);
+				question = undefined;
+				if (DEBUG_MODE) console.log(value);
+				break;
+			}
+			case DATA_TYPES.CHAPTER_DESCRIPTION: {
+				if (chapter) chapter.description = value;
+				break;
+			}
+			case DATA_TYPES.QUESTION_SENTENCE: {
+				// 未登録の問題情報があれば追加する
+				if (chapter) chapter.addQuestion(question);
+				question = new Question(value);
+				if (DEBUG_MODE) console.log(value);
+				break;
+			}
+			case DATA_TYPES.HELP_TEXT: {
+				if (question) question.helpText = value;
+				break;
+			}
+			case DATA_TYPES.CHOICE: {
+				const isCorrect = this.values[r][2];
+				if (question) question.addChoice(new Choice(value, isCorrect));
+				break;
+			}
+			case DATA_TYPES.ANSWER: {
+				if (question) question.answer = value;
+				break;
+			}
+			case DATA_TYPES.EXPLANATION: {
+				if (question) question.explanation = value;
+				break;
+			}
+			case DATA_TYPES.LINK: {
+				const displayText = this.values[r][2];
+				if (question) question.addLink(new Link(value, displayText));
+				break;
+			}
 			}
 		}
 

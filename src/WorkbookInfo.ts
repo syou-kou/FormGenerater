@@ -218,6 +218,9 @@ export class WorkbookInfo {
 	public addChapter(chapter: Chapter): void {
 		if (chapter) this._chapters.push(chapter);
 	}
+	public addSheetName(sheetName: string): void {
+		if (sheetName) this._sheetNames.push(sheetName);
+	}
 
 	public get workbookTitle(): string {
 		return this._workbookTitle;
@@ -228,13 +231,13 @@ export class WorkbookInfo {
 	public get sheetNames(): Array<string> {
 		return this._sheetNames;
 	}
-	public set sheetNames(value: Array<string>) {
-		this._sheetNames = value;
-	}
+	// public set sheetNames(value: Array<string>) {
+	// 	this._sheetNames = value;
+	// }
 	public get chapters(): Array<Chapter> {
 		return this._chapters;
 	}
-	public set chapters(value: Array<Chapter>) {
-		this._chapters = value;
-	}
+	// public set chapters(value: Array<Chapter>) {
+	// 	this._chapters = value;
+	// }
 }
