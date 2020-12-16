@@ -1,6 +1,10 @@
-.clasp.json
-.claspignore
-node_modules
-package.json
-package-lock.json
-appsscript.json
+# Dependency directories
+node_modules/
+
+# Editor
+.vscode/*
+.editorconfig
+
+# Build directory
+dist/
+

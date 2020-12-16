@@ -1,14 +1,16 @@
-const activeSpreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-let log: Log;
-let workbookInfo: WorkbookInfo;
+import { DEBUG_MODE, SHEET_NAME_LOG } from './const';
+import { Form } from './Form';
+import { Log } from './Log';
+import { FirstSheet, OtherSheet } from './Sheet';
+import { WorkbookInfo } from './WorkbookInfo';
 
-class FormGenerator {
+export const activeSpreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+export let log: Log;
+export let workbookInfo: WorkbookInfo;
 
-	constructor() {
-	}
-
+export class FormGenerator {
 	// スプレッドシートの問題情報からフォームを作成する
-	public run(): boolean {
+	public main(): boolean {
 		log = new Log(SHEET_NAME_LOG);
 		if (!log) return false;
 		log.clearLog();
@@ -26,7 +28,7 @@ class FormGenerator {
 
 	// target (or sample)シートの情報を取得する
 	private readFirstSheet() {
-		const sheetName = DEBUG_MODE ? "sample" : "target";
+		const sheetName = DEBUG_MODE ? 'sample' : 'target';
 		const firstSheet = new FirstSheet(sheetName);
 		firstSheet.readWorkbookTitle(1);
 		firstSheet.readSheetNames(2);
@@ -35,7 +37,7 @@ class FormGenerator {
 	// target (or sample)以外のすべてのシートの情報を取得する
 	private readOtherSheets() {
 		workbookInfo.sheetNames.forEach((sheetName, index) => {
-			const isLastSheet = (index === workbookInfo.sheetNames.length - 1);
+			const isLastSheet = index === workbookInfo.sheetNames.length - 1;
 			const otherSheet = new OtherSheet(sheetName, isLastSheet);
 			otherSheet.readQuestionInfo(1);
 		});
@@ -49,5 +51,4 @@ class FormGenerator {
 			new Form(chapter, saveFolder).createForm();
 		}
 	}
-
 }
