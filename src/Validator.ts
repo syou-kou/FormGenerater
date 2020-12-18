@@ -20,7 +20,7 @@ export class Validator {
 		if (this.isCorrectValue(validationType, args)) return true;
 
 		if (logType !== LOG_TYPES.NONE) {
-			let message = this.createMessage(validationType);
+			let message = this.createMessage(validationType, args);
 			if (!!cellLocation) {
 				message += `"\n(${cellLocation.toString()})"`;
 			}
@@ -38,12 +38,12 @@ export class Validator {
 		}
 	}
 
-	private createMessage(validationType: string): string {
+	private createMessage(validationType: string, args: Array<string>): string {
 		switch (validationType) {
 			case VALIDATION_TYPES.NOT_NULL:
-				return this._value + 'が取得できません';
+				return '値が取得できません';
 			case VALIDATION_TYPES.DATA_TYPE:
-				return this._value + 'ではありません';
+				return `'この値は${args[0]}ではありません'`;
 		}
 	}
 
