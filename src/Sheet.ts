@@ -5,9 +5,9 @@ import { Validator } from './Validator';
 import { Chapter, Choice, Link, Question } from './WorkbookInfo';
 
 export class Sheet {
-	private _sheetName: string;
-	private _sheet: GoogleAppsScript.Spreadsheet.Sheet;
-	private _values: string[][];
+	protected _sheetName: string;
+	protected _sheet: GoogleAppsScript.Spreadsheet.Sheet;
+	protected _values: string[][];
 
 	constructor(sheetName: string) {
 		this._sheetName = sheetName;
@@ -40,34 +40,44 @@ export class FirstSheet extends Sheet {
 		super(sheetName);
 	}
 
-	// 第(rowId + 1)行から問題集タイトルを取得する
-	public readWorkbookTitle(rowId: number): void {
-		const dataType = this.values[rowId][0];
-		const isCorrectDataType = new Validator(dataType).isCorrectDataType(
-			DATA_TYPES.WORKBOOK_TITLE,
-			LOG_TYPES.ERROR,
-			new CellLocation(this.sheetName, rowId, 0)
-		);
-		if (isCorrectDataType) {
-			const workbookTitle = this.values[rowId][1];
-			const isCorrectWorkbookTitle = new Validator(workbookTitle)
-				.isNotNull(LOG_TYPES.ERROR, new CellLocation(this.sheetName, rowId, 1));
-			if (isCorrectWorkbookTitle) workbookInfo.workbookTitle = workbookTitle;
-		}
-	}
-
-	// 第(startRowId + 1)行以降からシート名をすべて取得する
-	public readSheetNames(startRowId: number): void {
-		for (let r = startRowId; r < this.sheet.getLastRow(); r++) {
-			const dataType = this.values[r][0];
-			const isCorrectDataType = new Validator(dataType)
+	// 第(startRowId + 1)行以降からシート情報をすべて取得する
+	public readSheetInfo(startRowId: number): void {
+		for (let r = startRowId; r < this._sheet.getLastRow(); r++) {
+			const dataType = this._values[r][0];
+			const isDataTypeNotNull = new Validator(dataType)
 				.isNotNull(LOG_TYPES.NONE, undefined);
-			if (!isCorrectDataType) continue;
+			if (!isDataTypeNotNull) continue;
 
-			const sheetName = this.values[r][1];
-			const isCorrectSheetName = new Validator(sheetName)
-				.isNotNull(LOG_TYPES.ERROR, new CellLocation(this.sheetName, r, 1));
-			if (isCorrectSheetName) workbookInfo.addSheetName(sheetName);
+			const value = this._values[r][1];
+			const valueLocation = new CellLocation(this._sheetName, r, 1);
+			const isValueNotNull = new Validator(value)
+				.isNotNull(LOG_TYPES.ERROR, valueLocation);
+			if (!isValueNotNull) continue;
+
+			switch (dataType) {
+				case DATA_TYPES.WORKBOOK_TITLE: {
+					workbookInfo.workbookTitle = value;
+					break;
+				}
+				case DATA_TYPES.SHEET_NAME: {
+					workbookInfo.addSheetName(value);
+					break;
+				}
+				case DATA_TYPES.OPTION: {
+					const isOptionIncluded = new Validator(value)
+						.isIncludedOption(LOG_TYPES.ERROR, valueLocation);
+					if (isOptionIncluded) workbookInfo.setOption(value);
+					break;
+				}
+				case DATA_TYPES.CHAPTER_TITLE: {
+					workbookInfo.title = value;
+					break;
+				}
+				case DATA_TYPES.CHAPTER_DESCRIPTION: {
+					workbookInfo.description = value;
+					break;
+				}
+			}
 		}
 	}
 }
@@ -75,23 +85,24 @@ export class FirstSheet extends Sheet {
 export class OtherSheet extends Sheet {
 	private _isLastSheet: boolean;
 
-	constructor(sheetName: string, isLastSheet: boolean) {
+	constructor(sheetName: string) {
 		super(sheetName);
-		this._isLastSheet = isLastSheet;
 	}
 
 	// 第(startRowId + 1)行以降から問題情報をすべて取得する
 	public readQuestionInfo(startRowId: number): void {
 		let chapter: Chapter;
 		let question: Question;
-		for (let r = startRowId; r < this.sheet.getLastRow(); r++) {
-			const dataType = this.values[r][0];
-			const isCorrectDataType = new Validator(dataType).isNotNull(LOG_TYPES.NONE, undefined);
-			if (!isCorrectDataType) continue;
+		for (let r = startRowId; r < this._sheet.getLastRow(); r++) {
+			const dataType = this._values[r][0];
+			const isDataTypeNotNull = new Validator(dataType)
+				.isNotNull(LOG_TYPES.NONE, undefined);
+			if (!isDataTypeNotNull) continue;
 
-			const value = this.values[r][1];
-			const isCorrectValue = new Validator(value).isNotNull(LOG_TYPES.NONE, undefined);
-			if (!isCorrectValue) continue;
+			const value = this._values[r][1];
+			const isValueNotNull = new Validator(value)
+				.isNotNull(LOG_TYPES.ERROR, new CellLocation(this._sheetName, r, 1));
+			if (!isValueNotNull) continue;
 
 			switch (dataType) {
 				case DATA_TYPES.CHAPTER_TITLE: {
@@ -119,7 +130,7 @@ export class OtherSheet extends Sheet {
 					break;
 				}
 				case DATA_TYPES.CHOICE: {
-					const isCorrect = this.values[r][2];
+					const isCorrect = this._values[r][2];
 					if (question) question.addChoice(new Choice(value, isCorrect));
 					break;
 				}
@@ -132,7 +143,7 @@ export class OtherSheet extends Sheet {
 					break;
 				}
 				case DATA_TYPES.LINK: {
-					const displayText = this.values[r][2];
+					const displayText = this._values[r][2];
 					if (question) question.addLink(new Link(value, displayText));
 					break;
 				}
@@ -143,11 +154,4 @@ export class OtherSheet extends Sheet {
 		if (chapter) chapter.addQuestion(question);
 		workbookInfo.addChapter(chapter);
 	}
-
-	public get isLastSheet(): boolean {
-		return this._isLastSheet;
-	}
-	// public set isLastSheet(value: boolean) {
-	// 	this._isLastSheet = value;
-	// }
 }

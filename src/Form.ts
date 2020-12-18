@@ -3,48 +3,57 @@ import { log } from './FormGenerator';
 import { Chapter, Question } from './WorkbookInfo';
 
 export class Form {
-	private _chapter: Chapter;
-	private _folder: GoogleAppsScript.Drive.Folder;
-	private _form: GoogleAppsScript.Forms.Form;
+	protected _folder: GoogleAppsScript.Drive.Folder;
+	protected _form: GoogleAppsScript.Forms.Form;
 
-	constructor(chapter: Chapter, folder: GoogleAppsScript.Drive.Folder) {
-		this._chapter = chapter; // 章情報
+	constructor(folder: GoogleAppsScript.Drive.Folder) {
 		this._folder = folder;   // 保存先フォルダ
 		this._form = null;       // フォーム情報
 	}
 
-	// フォームを章単位で作成する
-	public createForm(): void {
-		this._form = FormApp.create(this._chapter.title);
-		this._form.setDescription(this._chapter.description); // 章概要
+	// 各章のフォームを作成する
+	public createChapterForm(chapter: Chapter): void {
+		this._form = FormApp.create(chapter.title);
+		this._form.setDescription(chapter.description); // 章概要
 		this._form.setIsQuiz(true); // テスト形式オプション
 		this._form.setProgressBar(false); // 進行状況バー非表示
-		for (const question of this._chapter.questions) {
-			if (DEBUG_MODE) question.printQuestionInfo();
-			question.setAnswerType();
-			switch (question.answerType) {
-				case ANSWER_TYPES.SELECTION_SINGLE: {
-					const multipleChoiceItem = this._form.addMultipleChoiceItem();
-					this.setQuestionInfoOfAllType(multipleChoiceItem, question);
-					this.setQuestionInfoOfSelectionType(multipleChoiceItem, question);
-					break;
-				}
-				case ANSWER_TYPES.SELECTION_MULTIPLE: {
-					const checkboxItem = this._form.addCheckboxItem();
-					this.setQuestionInfoOfAllType(checkboxItem, question);
-					this.setQuestionInfoOfSelectionType(checkboxItem, question);
-					break;
-				}
-				case ANSWER_TYPES.DESCRIPTION: {
-					const textItem = this._form.addTextItem();
-					this.setQuestionInfoOfAllType(textItem, question);
-					this.setQuestionInfoOfTextType(textItem, question);
-					break;
-				}
+		for (const question of chapter.questions) {
+			this.createQuestionForm(question);
+		}
+		this.moveForm();
+	}
+
+	// 各問題のフォームを作成する
+	protected createQuestionForm(question: Question): void {
+		if (DEBUG_MODE) question.printQuestionInfo();
+		question.setAnswerType();
+		switch (question.answerType) {
+			case ANSWER_TYPES.SELECTION_SINGLE: {
+				const multipleChoiceItem = this._form.addMultipleChoiceItem();
+				this.setQuestionInfoOfAllType(multipleChoiceItem, question);
+				this.setQuestionInfoOfSelectionType(multipleChoiceItem, question);
+				break;
+			}
+			case ANSWER_TYPES.SELECTION_MULTIPLE: {
+				const checkboxItem = this._form.addCheckboxItem();
+				this.setQuestionInfoOfAllType(checkboxItem, question);
+				this.setQuestionInfoOfSelectionType(checkboxItem, question);
+				break;
+			}
+			case ANSWER_TYPES.DESCRIPTION: {
+				const textItem = this._form.addTextItem();
+				this.setQuestionInfoOfAllType(textItem, question);
+				this.setQuestionInfoOfTextType(textItem, question);
+				break;
 			}
 		}
-		// 作成したフォームを保存先フォルダに移動する
-		this.moveForm();
+	}
+
+	// 作成したフォームを保存先フォルダに移動する
+	protected moveForm(): void {
+		const file = DriveApp.getFileById(this._form.getId());
+		this._folder.addFile(file);
+		DriveApp.getRootFolder().removeFile(file);
 	}
 
 	// すべての解答形式に共通する項目を設定する
@@ -123,29 +132,43 @@ export class Form {
 		return feedback.build();
 	}
 
-	// 作成したフォームを保存先フォルダに移動する
-	private moveForm() {
-		const file = DriveApp.getFileById(this._form.getId());
-		this._folder.addFile(file);
-		DriveApp.getRootFolder().removeFile(file);
-	}
-
-	public get chapter(): Chapter {
-		return this._chapter;
-	}
-	// public set chapter(value: Chapter) {
-	// 	this._chapter = value;
-	// }
 	public get folder(): GoogleAppsScript.Drive.Folder {
 		return this._folder;
 	}
 	// public set folder(value: GoogleAppsScript.Drive.Folder) {
 	// 	this._folder = value;
 	// }
-	public get form(): GoogleAppsScript.Forms.Form {
-		return this._form;
-	}
+	// public get form(): GoogleAppsScript.Forms.Form {
+	// 	return this._form;
+	// }
 	// public set form(value: GoogleAppsScript.Forms.Form) {
 	// 	this._form = value;
 	// }
+}
+
+export class AllChaptersForm extends Form {
+	private _title: string;             // (全章まとめ用)章タイトル
+	private _description: string;       // (全章まとめ用)章概要
+
+	constructor(folder: GoogleAppsScript.Drive.Folder) {
+		super(folder);
+	}
+
+	// 全章まとめのフォームを作成する
+	public createAllChaptersForm(
+		title: string,
+		description: string,
+		chapters: Array<Chapter>
+	): void {
+		this._form = FormApp.create(title);
+		this._form.setDescription(description); // 章概要
+		this._form.setIsQuiz(true); // テスト形式オプション
+		this._form.setProgressBar(false); // 進行状況バー非表示
+		for (const chapter of chapters) {
+			for (const question of chapter.questions) {
+				this.createQuestionForm(question);
+			}
+		}
+		this.moveForm();
+	}
 }

@@ -1,5 +1,5 @@
-import { DEBUG_MODE, SHEET_NAME_LOG } from './const';
-import { Form } from './Form';
+import { DEBUG_MODE, OPTION_TYPES, SHEET_NAME_LOG } from './const';
+import { AllChaptersForm, Form } from './Form';
 import { Log } from './Log';
 import { FirstSheet, OtherSheet } from './Sheet';
 import { WorkbookInfo } from './WorkbookInfo';
@@ -18,7 +18,7 @@ export class FormGenerator {
 		workbookInfo = new WorkbookInfo();
 
 		this.readFirstSheet();
-		if (!workbookInfo.workbookTitle || !workbookInfo.sheetNames) {
+		if (!workbookInfo.workbookTitle || !workbookInfo.sheetNames.length) {
 			return false;
 		}
 		this.readOtherSheets();
@@ -30,15 +30,13 @@ export class FormGenerator {
 	private readFirstSheet() {
 		const sheetName = DEBUG_MODE ? 'sample' : 'target';
 		const firstSheet = new FirstSheet(sheetName);
-		firstSheet.readWorkbookTitle(1);
-		firstSheet.readSheetNames(2);
+		firstSheet.readSheetInfo(1);
 	}
 
 	// target (or sample)以外のすべてのシートの情報を取得する
 	private readOtherSheets() {
-		workbookInfo.sheetNames.forEach((sheetName, index) => {
-			const isLastSheet = index === workbookInfo.sheetNames.length - 1;
-			const otherSheet = new OtherSheet(sheetName, isLastSheet);
+		workbookInfo.sheetNames.forEach((sheetName) => {
+			const otherSheet = new OtherSheet(sheetName);
 			otherSheet.readQuestionInfo(1);
 		});
 	}
@@ -48,7 +46,13 @@ export class FormGenerator {
 		const saveFolder = DriveApp.createFolder(workbookInfo.workbookTitle);
 		for (const chapter of workbookInfo.chapters) {
 			console.log(chapter.title);
-			new Form(chapter, saveFolder).createForm();
+			new Form(saveFolder).createChapterForm(chapter);
+		}
+		if (workbookInfo.hasOption(OPTION_TYPES.CREATE_ALL_CHAPTERS_SET)) {
+			new AllChaptersForm(saveFolder).createAllChaptersForm(
+				workbookInfo.title,
+				workbookInfo.description,
+				workbookInfo.chapters);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 import { CellLocation } from './CellLocation';
-import { LOG_TYPES, VALIDATION_TYPES } from './const';
+import { LOG_TYPES, OPTION_TYPES, VALIDATION_TYPES } from './const';
 import { log } from './FormGenerator';
 
 export class Validator {
@@ -12,8 +12,8 @@ export class Validator {
 	public isNotNull(logType: string, cellLocation: CellLocation): boolean {
 		return this.validate(VALIDATION_TYPES.NOT_NULL, [], logType, cellLocation);
 	}
-	public isCorrectDataType(correctDataType: string, logType: string, cellLocation: CellLocation): boolean {
-		return this.validate(VALIDATION_TYPES.DATA_TYPE, [correctDataType], logType, cellLocation);
+	public isIncludedOption(logType: string, cellLocation: CellLocation): boolean {
+		return this.validate(VALIDATION_TYPES.INCLUDED_OPTION, Object.values(OPTION_TYPES), logType, cellLocation);
 	}
 
 	private validate(validationType: string, args: Array<string>, logType: string, cellLocation: CellLocation): boolean {
@@ -21,7 +21,7 @@ export class Validator {
 
 		if (logType !== LOG_TYPES.NONE) {
 			let message = this.createMessage(validationType, args);
-			if (!!cellLocation) {
+			if (cellLocation) {
 				message += `"\n(${cellLocation.toString()})"`;
 			}
 			log.printLog(logType, message);
@@ -33,8 +33,8 @@ export class Validator {
 		switch (validationType) {
 			case VALIDATION_TYPES.NOT_NULL:
 				return !!this._value;
-			case VALIDATION_TYPES.DATA_TYPE:
-				return (!!this._value && !!args[0] && this._value === args[0]);
+			case VALIDATION_TYPES.INCLUDED_OPTION:
+				return (!!this._value && !!args && args.includes(this._value));
 		}
 	}
 
@@ -42,8 +42,8 @@ export class Validator {
 		switch (validationType) {
 			case VALIDATION_TYPES.NOT_NULL:
 				return '値が取得できません';
-			case VALIDATION_TYPES.DATA_TYPE:
-				return `'${args[0]}を入力してください'`;
+			case VALIDATION_TYPES.INCLUDED_OPTION:
+				return `'${this._value}というオプションは登録されていません'`;
 		}
 	}
 

@@ -208,18 +208,30 @@ export class WorkbookInfo {
 	private _workbookTitle: string;     // 問題集タイトル
 	private _sheetNames: Array<string>; // 章別シート名配列
 	private _chapters: Array<Chapter>;  // 章情報配列
+	private _options: Array<string>;    // オプション情報
+	private _title: string;             // (全章まとめ用)章タイトル
+	private _description: string;       // (全章まとめ用)章概要
 
 	constructor() {
 		this._workbookTitle = '';
 		this._sheetNames = [];
 		this._chapters = [];
+		this._options = [];
+		this._title = '';
+		this._description = '';
 	}
 
+	public addSheetName(sheetName: string): void {
+		if (sheetName) this._sheetNames.push(sheetName);
+	}
 	public addChapter(chapter: Chapter): void {
 		if (chapter) this._chapters.push(chapter);
 	}
-	public addSheetName(sheetName: string): void {
-		if (sheetName) this._sheetNames.push(sheetName);
+	public hasOption(option: string): boolean {
+		return this._options.includes(option);
+	}
+	public setOption(option: string): void {
+		this._options.push(option);
 	}
 
 	public get workbookTitle(): string {
@@ -240,4 +252,22 @@ export class WorkbookInfo {
 	// public set chapters(value: Array<Chapter>) {
 	// 	this._chapters = value;
 	// }
+	// public get options(): Array<string> {
+	// 	return this._options;
+	// }
+	// public set options(value: Array<string>) {
+	// 	this._options = value;
+	// }
+	public get title(): string {
+		return this._title;
+	}
+	public set title(value: string) {
+		this._title = value;
+	}
+	public get description(): string {
+		return this._description;
+	}
+	public set description(value: string) {
+		this._description = value;
+	}
 }
