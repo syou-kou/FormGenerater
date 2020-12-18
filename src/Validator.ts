@@ -4,53 +4,53 @@ import { log } from './FormGenerator';
 
 export class Validator {
 	private _value: string;
-	private _cellLocation: CellLocation;
 
-	constructor(value: string, cellLocation: CellLocation) {
+	constructor(value: string) {
 		this._value = value;
-		this._cellLocation = cellLocation;
 	}
 
-	public validate(validationType: string, args: Array<string>, logType: string): boolean {
-		const isCorrect = this.isCorrect(validationType, args);
-		if (logType !== LOG_TYPES.NONE && !isCorrect) {
+	public isNotNull(logType: string, cellLocation: CellLocation): boolean {
+		return this.validate(VALIDATION_TYPES.NOT_NULL, [], logType, cellLocation);
+	}
+	public isCorrectDataType(correctDataType: string, logType: string, cellLocation: CellLocation): boolean {
+		return this.validate(VALIDATION_TYPES.DATA_TYPE, [correctDataType], logType, cellLocation);
+	}
+
+	private validate(validationType: string, args: Array<string>, logType: string, cellLocation: CellLocation): boolean {
+		if (this.isCorrectValue(validationType, args)) return true;
+
+		if (logType !== LOG_TYPES.NONE) {
 			let message = this.createMessage(validationType);
-			if (this.cellLocation) {
-				message += `"\n(${this.cellLocation.toString()})"`;
+			if (!!cellLocation) {
+				message += `"\n(${cellLocation.toString()})"`;
 			}
 			log.printLog(logType, message);
 		}
-		return isCorrect;
+		return false;
 	}
 
-	private isCorrect(validationType: string, args: Array<string>): boolean {
+	private isCorrectValue(validationType: string, args: Array<string>): boolean {
 		switch (validationType) {
 			case VALIDATION_TYPES.NOT_NULL:
-				return !!this.value;
+				return !!this._value;
 			case VALIDATION_TYPES.DATA_TYPE:
-				return (!!this.value && !!args[0] && this.value === args[0]);
+				return (!!this._value && !!args[0] && this._value === args[0]);
 		}
 	}
 
 	private createMessage(validationType: string): string {
 		switch (validationType) {
 			case VALIDATION_TYPES.NOT_NULL:
-				return this.value + 'が取得できません';
+				return this._value + 'が取得できません';
 			case VALIDATION_TYPES.DATA_TYPE:
-				return this.value + 'ではありません';
+				return this._value + 'ではありません';
 		}
 	}
 
-	public get value(): string {
-		return this._value;
-	}
+	// public get value(): string {
+	// 	return this._value;
+	// }
 	// public set value(value: string) {
 	// 	this._value = value;
-	// }
-	public get cellLocation(): CellLocation {
-		return this._cellLocation;
-	}
-	// public set cellLocation(value: CellLocation) {
-	// 	this._cellLocation = value;
 	// }
 }
