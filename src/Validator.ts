@@ -43,7 +43,7 @@ export class Validator {
 			case VALIDATION_TYPES.NOT_NULL:
 				return '値が取得できません';
 			case VALIDATION_TYPES.DATA_TYPE:
-				return `'この値は${args[0]}ではありません'`;
+				return `'${args[0]}を入力してください'`;
 		}
 	}
 
