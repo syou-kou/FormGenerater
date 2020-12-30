@@ -172,16 +172,24 @@ export class Question {
 export class Chapter {
 	private _title: string;              // 章タイトル
 	private _description: string;        // 章概要
+	private _options: Array<string>;     // オプション情報
 	private _questions: Array<Question>; // 問題情報配列
 
 	constructor(title: string) {
 		this._title = title;
 		this._description = '';
+		this._options = [];
 		this._questions = [];
 	}
 
 	public addQuestion(question: Question): void {
 		if (question) this._questions.push(question);
+	}
+	public hasOption(option: string): boolean {
+		return this._options.includes(option);
+	}
+	public setOption(option: string): void {
+		this._options.push(option);
 	}
 
 	public get title(): string {
@@ -196,6 +204,12 @@ export class Chapter {
 	public set description(value: string) {
 		this._description = value;
 	}
+	// public get options(): Array<string> {
+	// 	return this._options;
+	// }
+	// public set options(value: Array<string>) {
+	// 	this._options = value;
+	// }
 	public get questions(): Array<Question> {
 		return this._questions;
 	}

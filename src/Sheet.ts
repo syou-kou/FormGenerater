@@ -100,8 +100,9 @@ export class OtherSheet extends Sheet {
 			if (!isDataTypeNotNull) continue;
 
 			const value = this._values[r][1];
+			const valueLocation = new CellLocation(this._sheetName, r, 1);
 			const isValueNotNull = new Validator(value)
-				.isNotNull(LOG_TYPES.ERROR, new CellLocation(this._sheetName, r, 1));
+				.isNotNull(LOG_TYPES.ERROR, valueLocation);
 			if (!isValueNotNull) continue;
 
 			switch (dataType) {
@@ -116,6 +117,12 @@ export class OtherSheet extends Sheet {
 				}
 				case DATA_TYPES.CHAPTER_DESCRIPTION: {
 					if (chapter) chapter.description = value;
+					break;
+				}
+				case DATA_TYPES.OPTION: {
+					const isOptionIncluded = new Validator(value)
+						.isIncludedOption(LOG_TYPES.ERROR, valueLocation);
+					if (isOptionIncluded) chapter.setOption(value);
 					break;
 				}
 				case DATA_TYPES.QUESTION_SENTENCE: {

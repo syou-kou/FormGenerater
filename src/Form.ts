@@ -1,5 +1,5 @@
-import { ANSWER_TYPES, DEBUG_MODE, LOG_TYPES } from './const';
-import { log } from './FormGenerator';
+import { ANSWER_TYPES, DEBUG_MODE, LOG_TYPES, OPTION_TYPES } from './const';
+import { log, workbookInfo } from './FormGenerator';
 import { Chapter, Question } from './WorkbookInfo';
 
 export class Form {
@@ -13,18 +13,37 @@ export class Form {
 
 	// 各章のフォームを作成する
 	public createChapterForm(chapter: Chapter): void {
-		this._form = FormApp.create(chapter.title);
-		this._form.setDescription(chapter.description); // 章概要
-		this._form.setIsQuiz(true); // テスト形式オプション
-		this._form.setProgressBar(false); // 進行状況バー非表示
+		this.setChapterInfo(
+			chapter.title,
+			chapter.description,
+			chapter.hasOption(OPTION_TYPES.SHUFFLE_QUESTIONS),
+		);
 		for (const question of chapter.questions) {
-			this.createQuestionForm(question);
+			this.setQuestionInfo(question);
 		}
 		this.moveForm();
 	}
 
-	// 各問題のフォームを作成する
-	protected createQuestionForm(question: Question): void {
+	// 各章の情報をフォームに反映する
+	protected setChapterInfo(
+		title: string,
+		description: string,
+		shuffleQuestions: boolean,
+	): void {
+		this._form = FormApp.create(title); // 章タイトル
+		this._form.setDescription(description); // 章概要
+
+		// スプレッドシートから指定されたオプション
+		if (shuffleQuestions) {
+			this._form.setShuffleQuestions(true); // 問題をシャッフルする
+		}
+		// 固定値のオプション
+		this._form.setCollectEmail(true); // 回答者のメールアドレスを収集する
+		this._form.setIsQuiz(true); // テストにする
+	}
+
+	// 各問題の情報をフォームに反映する
+	protected setQuestionInfo(question: Question): void {
 		if (DEBUG_MODE) question.printQuestionInfo();
 		question.setAnswerType();
 		switch (question.answerType) {
@@ -132,9 +151,9 @@ export class Form {
 		return feedback.build();
 	}
 
-	public get folder(): GoogleAppsScript.Drive.Folder {
-		return this._folder;
-	}
+	// public get folder(): GoogleAppsScript.Drive.Folder {
+	// 	return this._folder;
+	// }
 	// public set folder(value: GoogleAppsScript.Drive.Folder) {
 	// 	this._folder = value;
 	// }
@@ -147,26 +166,20 @@ export class Form {
 }
 
 export class AllChaptersForm extends Form {
-	private _title: string;             // (全章まとめ用)章タイトル
-	private _description: string;       // (全章まとめ用)章概要
-
 	constructor(folder: GoogleAppsScript.Drive.Folder) {
 		super(folder);
 	}
 
 	// 全章まとめのフォームを作成する
-	public createAllChaptersForm(
-		title: string,
-		description: string,
-		chapters: Array<Chapter>
-	): void {
-		this._form = FormApp.create(title);
-		this._form.setDescription(description); // 章概要
-		this._form.setIsQuiz(true); // テスト形式オプション
-		this._form.setProgressBar(false); // 進行状況バー非表示
+	public createAllChaptersForm(chapters: Array<Chapter>): void {
+		this.setChapterInfo(
+			workbookInfo.title,
+			workbookInfo.description,
+			workbookInfo.hasOption(OPTION_TYPES.SHUFFLE_QUESTIONS)
+		);
 		for (const chapter of chapters) {
 			for (const question of chapter.questions) {
-				this.createQuestionForm(question);
+				this.setQuestionInfo(question);
 			}
 		}
 		this.moveForm();

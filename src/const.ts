@@ -32,6 +32,7 @@ export const DATA_TYPES = {
 // オプション種別
 export const OPTION_TYPES = {
 	CREATE_ALL_CHAPTERS_SET: '全章まとめ作成',
+	SHUFFLE_QUESTIONS: '問題シャッフル',
 };
 
 // 選択肢の正解

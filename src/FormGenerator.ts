@@ -49,10 +49,7 @@ export class FormGenerator {
 			new Form(saveFolder).createChapterForm(chapter);
 		}
 		if (workbookInfo.hasOption(OPTION_TYPES.CREATE_ALL_CHAPTERS_SET)) {
-			new AllChaptersForm(saveFolder).createAllChaptersForm(
-				workbookInfo.title,
-				workbookInfo.description,
-				workbookInfo.chapters);
+			new AllChaptersForm(saveFolder).createAllChaptersForm(workbookInfo.chapters);
 		}
 	}
 }
