@@ -1,9 +1,0 @@
-# Dependency directories
-node_modules/
-
-# Editor
-.vscode/*
-.editorconfig
-
-# Build directory
-dist/
